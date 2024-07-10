@@ -1,15 +1,14 @@
 package com.JavaTestTask.controller;
 
 import com.JavaTestTask.enuns.FileProcessorEnum;
+import com.JavaTestTask.model.FileDataDto;
 import com.JavaTestTask.service.FileProcessorService;
 import com.JavaTestTask.service.FileSaveUploadService;
+import com.JavaTestTask.service.FileSearchService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,6 +29,12 @@ public class UploadController {
 
     private final FileSaveUploadService fileSaveUploadService;
     private final Map<FileProcessorEnum, FileProcessorService> fileProcessorMap;
+    private final FileSearchService fileSearchService;
+
+    @GetMapping
+    public ResponseEntity<List<FileDataDto>> searchFile(@RequestParam("search") String search){
+        return ResponseEntity.status(HttpStatus.OK).body(fileSearchService.search(search));
+    }
 
     @PostMapping
     public ResponseEntity<String> uploadCsv(@RequestParam("file") MultipartFile file,

@@ -4,7 +4,6 @@ import com.JavaTestTask.model.entity.FileData;
 import com.JavaTestTask.repository.FileDataRepository;
 import com.JavaTestTask.service.FileProcessorService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,16 +27,22 @@ public class ProcessFileCsvServiceImpl implements FileProcessorService {
             List<FileData> data = new ArrayList<>();
 
             String line;
+            boolean isFirstLine = true;
             while ((line = reader.readLine()) != null) {
+
+                // Skip the header line
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+
                 String[] lineFields = line.split(delimiter);
 
-                if(!lineFields[0].equals("nome")){
-                    FileData fileData = new FileData();
-                    fileData.setNome(lineFields[0]);
-                    fileData.setTelefone(lineFields[1]);
-                    repository.save(fileData);
-                    data.add(fileData);
-                }
+                FileData fileData = new FileData();
+                fileData.setName(lineFields[0]);
+                fileData.setPhone(lineFields[1]);
+                repository.save(fileData);
+                data.add(fileData);
             }
 
             data.forEach(r -> {

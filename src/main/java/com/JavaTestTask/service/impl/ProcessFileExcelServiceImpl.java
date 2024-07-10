@@ -28,12 +28,21 @@ public class ProcessFileExcelServiceImpl implements FileProcessorService {
             Sheet sheet = w.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
 
+            // pula o cabeçalho
+            if (rowIterator.hasNext()) {
+                rowIterator.next();
+            }
+
             while (rowIterator.hasNext()) {
 
                 Row row = rowIterator.next();
                 FileData fileData = new FileData();
-                fileData.setNome(String.valueOf(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
-                fileData.setTelefone(String.valueOf(row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                fileData.setName(String.valueOf(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                fileData.setPhone(String.valueOf(row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+
+                if (fileData.getName().isEmpty() || fileData.getPhone().isEmpty()) {
+                    continue; // Skip rows with empty required fields
+                }
 
                 dataList.add(fileData);
             }
